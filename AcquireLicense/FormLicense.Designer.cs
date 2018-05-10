@@ -34,7 +34,7 @@
             this.buttonLicense = new System.Windows.Forms.Button();
             this.numericUpDown = new System.Windows.Forms.NumericUpDown();
             this.buttonLicenses = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
+            this.progressBar = new System.Windows.Forms.ProgressBar();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown)).BeginInit();
             this.SuspendLayout();
             // 
@@ -53,7 +53,7 @@
             // radioButtonMultiple
             // 
             this.radioButtonMultiple.AutoSize = true;
-            this.radioButtonMultiple.Location = new System.Drawing.Point(12, 115);
+            this.radioButtonMultiple.Location = new System.Drawing.Point(12, 106);
             this.radioButtonMultiple.Name = "radioButtonMultiple";
             this.radioButtonMultiple.Size = new System.Drawing.Size(106, 17);
             this.radioButtonMultiple.TabIndex = 1;
@@ -85,7 +85,7 @@
             // 
             // numericUpDown
             // 
-            this.numericUpDown.Location = new System.Drawing.Point(12, 151);
+            this.numericUpDown.Location = new System.Drawing.Point(12, 142);
             this.numericUpDown.Name = "numericUpDown";
             this.numericUpDown.Size = new System.Drawing.Size(50, 20);
             this.numericUpDown.TabIndex = 5;
@@ -94,7 +94,7 @@
             // 
             // buttonLicenses
             // 
-            this.buttonLicenses.Location = new System.Drawing.Point(68, 150);
+            this.buttonLicenses.Location = new System.Drawing.Point(68, 141);
             this.buttonLicenses.Name = "buttonLicenses";
             this.buttonLicenses.Size = new System.Drawing.Size(111, 23);
             this.buttonLicenses.TabIndex = 6;
@@ -102,14 +102,13 @@
             this.buttonLicenses.UseVisualStyleBackColor = true;
             this.buttonLicenses.Click += new System.EventHandler(this.buttonLicenses_Click);
             // 
-            // label1
+            // progressBar
             // 
-            this.label1.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.label1.Location = new System.Drawing.Point(0, 178);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(233, 26);
-            this.label1.TabIndex = 7;
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.progressBar.Location = new System.Drawing.Point(12, 172);
+            this.progressBar.Name = "progressBar";
+            this.progressBar.Size = new System.Drawing.Size(208, 23);
+            this.progressBar.Step = 1;
+            this.progressBar.TabIndex = 8;
             // 
             // FormAcquire
             // 
@@ -117,7 +116,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(232, 261);
             this.ControlBox = false;
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.progressBar);
             this.Controls.Add(this.buttonLicenses);
             this.Controls.Add(this.numericUpDown);
             this.Controls.Add(this.buttonLicense);
@@ -142,6 +141,6 @@
         private System.Windows.Forms.Button buttonLicense;
         private System.Windows.Forms.NumericUpDown numericUpDown;
         private System.Windows.Forms.Button buttonLicenses;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ProgressBar progressBar;
     }
 }

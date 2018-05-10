@@ -13,7 +13,7 @@ namespace AcquireLicense
 
         object token, licenseToken;
         public string realmToken, url, realm, username, password, clientId, role, origin;
-        int i, count;
+        int i;
         IRestResponse responseLicense;
         bool debug;
 
@@ -23,6 +23,10 @@ namespace AcquireLicense
             { radioButtonSingle.Checked = true; }
             else if (origin == "License")
             { radioButtonMultiple.Checked = true; }
+
+            numericUpDown.Value = 0;
+
+            //progressBar.Visible = false;
         }
 
         XElement xdoc = XElement.Load("C:\\Users\\Felipe.Fedozzi\\Source\\Repos\\AcquireLicense\\AcquireLicense\\var.xml");
@@ -133,10 +137,7 @@ namespace AcquireLicense
                 Form.origin = "License";
                 Form.Show();
             }
-            else if (dialogResult == DialogResult.No)
-            {
-                radioButtonMultiple.Checked = true;
-            }
+            else if (dialogResult == DialogResult.No) { radioButtonMultiple.Checked = true; }
         }
 
         private void buttonClose_Click(object sender, EventArgs e)
@@ -152,7 +153,6 @@ namespace AcquireLicense
             buttonLicense.Enabled = true;
             buttonLicenses.Enabled = false;
             numericUpDown.Enabled = false;
-            label1.Text = "";
         }
 
         private void radioButton2_CheckedChanged(object sender, EventArgs e)
@@ -164,28 +164,16 @@ namespace AcquireLicense
 
         private void numericUpDown_ValueChanged(object sender, EventArgs e)
         {
-            
-            if (numericUpDown.Value == 0)
-            {
-                label1.Text = "";
-                buttonLicenses.Enabled = false;
-            }
-            else if (numericUpDown.Value == 1)
-            {
-                label1.Text = "1 license will be aquired.";
-                buttonLicenses.Enabled = true;
-            }
-            else if (numericUpDown.Value > 1)
-            {
-                label1.Text = numericUpDown.Value + " licenses will be aquired.";
-                buttonLicenses.Enabled = true;
-            }
+            if (numericUpDown.Value == 0) { buttonLicenses.Enabled = false; }
+            else if (numericUpDown.Value > 1) { buttonLicenses.Enabled = true; }
         }
 
         private void buttonLicenses_Click(object sender, EventArgs e)
         {
+            progressBar.Visible = true;
+            progressBar.Maximum = Convert.ToInt32(numericUpDown.Value);
+
             i = 1;
-            count = 0;
 
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
 
@@ -257,7 +245,7 @@ namespace AcquireLicense
                 }
                 else if (responseLicense.Content.Contains("NO_AVAILABLE_LICENSE"))
                 {
-                    MessageBox.Show("Only " + count + " available licenses for " + numericUpDown.Value + " users.\n\nThe "+ count + " licenses were aquired.\n"+(numericUpDown.Value - count) +" user(s) couldn't acquire a license.", "Warning");
+                    MessageBox.Show("Only " + (i-1) + " available licenses for " + numericUpDown.Value + " users.\n\nThe "+ (i-1) + " licenses were aquired.\n"+(numericUpDown.Value - (i-1)) +" user(s) couldn't acquire a license.", "Warning");
                     return;
                 }
                 else if (responseLicense.Content.Contains("UNAUTHORIZED"))
@@ -265,12 +253,13 @@ namespace AcquireLicense
                     MessageBox.Show("User is not authorized to acquire a license with role " + role, "ERROR");
                     return;
                 }
-
+                
                 i++;
-                count++;
+
+                progressBar.Value = i-1;
             } while (i <= numericUpDown.Value);
 
-            if (count == 1)
+            if ((i-1) == 1)
             {
                 DialogResult dialogResult = MessageBox.Show("1 License for " + role.ToUpper() + " acquired for user " + username.ToUpper() + i + ". Do you want to copy the token?", "License Acquired", MessageBoxButtons.YesNo);
                 if (dialogResult == DialogResult.Yes)
@@ -279,12 +268,15 @@ namespace AcquireLicense
                     valuesLicenseToken.TryGetValue(role, out licenseToken);
                     MessageBox.Show("License Token acquired and copied to clipboard", "Token copied");
                     Clipboard.SetText(licenseToken.ToString());
+                    //progressBar.Visible = false;
                 }
                 else { return; }
             }
-            else if (count > 1)
+            else if ((i-1) > 1)
             {
-                MessageBox.Show(count + " licenses were acquired successfully.", "Success");
+                MessageBox.Show((i-1) + " licenses were acquired successfully.", "Success");
+                //progressBar.Visible = false;
+                progressBar.Value = i - 1;
             }
 
         }
