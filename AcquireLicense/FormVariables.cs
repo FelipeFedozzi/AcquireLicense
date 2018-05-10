@@ -6,7 +6,7 @@ namespace AcquireLicense
 {
     public partial class FormVariables : Form
     {
-        string url, realm, username, password, clientId, role;
+        public string url, realm, username, password, clientId, role, origin;
         bool debug;
         
         XElement xdoc = XElement.Load("C:\\Users\\Felipe.Fedozzi\\Source\\Repos\\AcquireLicense\\AcquireLicense\\var.xml");
@@ -46,16 +46,34 @@ namespace AcquireLicense
             
             this.Close();
 
-            FormAcquire form = new FormAcquire();
-            form.Show();
+            if (origin == "Main")
+            {
+                FormMain form = new FormMain();
+                form.Show();
+            }
+            else if (origin == "License")
+            {
+                FormAcquire form = new FormAcquire();
+                form.origin = "License";
+                form.Show();
+            }
         }
 
         private void buttonCancel_Click(object sender, EventArgs e)
         {
             this.Close();
 
-            FormAcquire form = new FormAcquire();
-            form.Show();
+            if (origin == "Main")
+            {
+                FormMain form = new FormMain();
+                form.Show();
+            }
+            else if (origin == "License")
+            {
+                FormAcquire form = new FormAcquire();
+                form.origin = "License";
+                form.Show();
+            }
         }
     }
 }

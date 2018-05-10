@@ -2,9 +2,9 @@
 <variables>
   <url>https://qakeycloak.eastus.cloudapp.azure.com/auth/realms/</url>
   <realm>TestRealm</realm>
-  <username>test.user4</username>
-  <password>test.user4</password>
+  <username>test.em</username>
+  <password>test.em</password>
   <clientId>admin-cli</clientId>
-  <role>test.role</role>
+  <role>esi.manage</role>
   <debug>False</debug>
 </variables>

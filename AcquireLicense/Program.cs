@@ -19,7 +19,7 @@ namespace AcquireLicense
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new FormAcquire());
+            Application.Run(new FormMain());
         }
     }
 }
