@@ -31,6 +31,11 @@ namespace AcquireLicense
 
         XElement xdoc = XElement.Load("C:\\Users\\Felipe.Fedozzi\\Source\\Repos\\AcquireLicense\\AcquireLicense\\var.xml");
 
+        private void FormAcquire_Load(object sender, EventArgs e)
+        {
+
+        }
+
         public FormAcquire()
         {
             InitializeComponent();
@@ -48,7 +53,7 @@ namespace AcquireLicense
             role = xdoc.Element("role").Value;
             debug = Convert.ToBoolean(xdoc.Element("debug").Value);
 
-            var client = new RestClient(url + realm + "/protocol/openid-connect/token");
+            var client = new RestClient(url + "/realms/" + realm + "/protocol/openid-connect/token");
             var request = new RestRequest(Method.POST);
             request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
             request.AddParameter("undefined", "grant_type=password&username=" + username + "&password=" + password + "&client_id=" + clientId, ParameterType.RequestBody);
@@ -87,7 +92,7 @@ namespace AcquireLicense
                 if (debug == true) { MessageBox.Show(realmToken, "DEBUG"); }
             }
 
-            var clientLicense = new RestClient(url + realm + "/license/license");
+            var clientLicense = new RestClient(url + "/realms/" + realm + "/license/license");
             var requestLicense = new RestRequest(Method.POST);
             requestLicense.AddHeader("Authorization", "Bearer " + realmToken);
             requestLicense.AddHeader("Content-Type", "application/json");
@@ -128,6 +133,7 @@ namespace AcquireLicense
 
         private void radioButton2_Click(object sender, EventArgs e)
         {
+            progressBar.Value = 0;
             DialogResult dialogResult = MessageBox.Show("Please be advised, to use multiple licenses the user need to have set multiple users and they need to be in numbered sequence (eg. USER1, USER2) for both username AND password. Please modify the username and password and remove the number at the end. Do you want to make the changes now?", "NOTICE", MessageBoxButtons.YesNo);
             if (dialogResult == DialogResult.Yes)
             {
@@ -144,7 +150,7 @@ namespace AcquireLicense
         {
             this.Close();
 
-            FormMain form = new FormMain();
+            FormLicenses form = new FormLicenses();
             form.Show();
         }
 
@@ -165,7 +171,7 @@ namespace AcquireLicense
         private void numericUpDown_ValueChanged(object sender, EventArgs e)
         {
             if (numericUpDown.Value == 0) { buttonLicenses.Enabled = false; }
-            else if (numericUpDown.Value > 1) { buttonLicenses.Enabled = true; }
+            else if (numericUpDown.Value > 0) { buttonLicenses.Enabled = true; }
         }
 
         private void buttonLicenses_Click(object sender, EventArgs e)
@@ -187,7 +193,7 @@ namespace AcquireLicense
 
             do
             {
-                var client = new RestClient(url + realm + "/protocol/openid-connect/token");
+                var client = new RestClient(url + "/realms/" + realm + "/protocol/openid-connect/token");
                 var request = new RestRequest(Method.POST);
                 request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
                 request.AddParameter("undefined", "grant_type=password&username=" + username + i + "&password=" + password + i + "&client_id=" + clientId, ParameterType.RequestBody);
@@ -201,12 +207,14 @@ namespace AcquireLicense
                 if (masterTokenArray.Contains("invalid"))
                 {
                     MessageBox.Show("Invalid user credentials", "ERROR");
+                    progressBar.Value = 0;
                     return;
                 }
 
                 if (masterTokenArray.Contains("unauthorized_client"))
                 {
                     MessageBox.Show("Invalid client", "ERROR");
+                    progressBar.Value = 0;
                     return;
                 }
 
@@ -216,6 +224,7 @@ namespace AcquireLicense
                 if (valuesMasterToken is null)
                 {
                     MessageBox.Show("Failed to acquire license", "ERROR");
+                    progressBar.Value = 0;
                     return;
                 }
 
@@ -226,7 +235,7 @@ namespace AcquireLicense
                     if (debug == true) { MessageBox.Show(realmToken, "DEBUG"); }
                 }
 
-                var clientLicense = new RestClient(url + realm + "/license/license");
+                var clientLicense = new RestClient(url + "/realms/" + realm + "/license/license");
                 var requestLicense = new RestRequest(Method.POST);
                 requestLicense.AddHeader("Authorization", "Bearer " + realmToken);
                 requestLicense.AddHeader("Content-Type", "application/json");
@@ -241,16 +250,19 @@ namespace AcquireLicense
                 if (responseLicense.Content.Contains("errorMessage") && responseLicense.Content.Contains("license") && responseLicense.Content.Contains("not") && responseLicense.Content.Contains("found"))
                 {
                     MessageBox.Show("License Type not found", "ERROR");
+                    progressBar.Value = 0;
                     return;
                 }
                 else if (responseLicense.Content.Contains("NO_AVAILABLE_LICENSE"))
                 {
                     MessageBox.Show("Only " + (i-1) + " available licenses for " + numericUpDown.Value + " users.\n\nThe "+ (i-1) + " licenses were aquired.\n"+(numericUpDown.Value - (i-1)) +" user(s) couldn't acquire a license.", "Warning");
+                    progressBar.Value = 0;
                     return;
                 }
                 else if (responseLicense.Content.Contains("UNAUTHORIZED"))
                 {
                     MessageBox.Show("User is not authorized to acquire a license with role " + role, "ERROR");
+                    progressBar.Value = 0;
                     return;
                 }
                 
@@ -275,7 +287,6 @@ namespace AcquireLicense
             else if ((i-1) > 1)
             {
                 MessageBox.Show((i-1) + " licenses were acquired successfully.", "Success");
-                //progressBar.Visible = false;
                 progressBar.Value = i - 1;
             }
 

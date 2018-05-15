@@ -10,88 +10,71 @@ namespace AcquireLicense
 {
     public partial class FormMain : Form
     {
-        object token, licenseToken;
-        string realmToken, url, realm, username, password, clientId, role;
+
+        string url, realm, username, password, clientId, masteruser, masterpass, role;
         bool debug;
 
         XElement xdoc = XElement.Load("C:\\Users\\Felipe.Fedozzi\\Source\\Repos\\AcquireLicense\\AcquireLicense\\var.xml");
 
-        public FormMain()
+        private void buttonClose_Click(object sender, EventArgs e)
         {
-            InitializeComponent();
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
-
-            url = xdoc.Element("url").Value;
-            realm = xdoc.Element("realm").Value;
-            username = xdoc.Element("username").Value;
-            password = xdoc.Element("password").Value;
-            clientId = xdoc.Element("clientId").Value;
-            debug = Convert.ToBoolean(xdoc.Element("debug").Value);
-
-            var client = new RestClient(url + realm + "/protocol/openid-connect/token");
-            var request = new RestRequest(Method.POST);
-            request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
-            request.AddParameter("undefined", "grant_type=password&username="+ username + "&password="+ password + "&client_id="+ clientId, ParameterType.RequestBody);
-
-            IRestResponse response = client.Execute(request);
-
-            if (debug == true) { MessageBox.Show(response.Content); }
-
-            string masterTokenArray = response.Content;
-
-            if (masterTokenArray.Contains("invalid"))
+            DialogResult exit = MessageBox.Show("Are you sure you want to exit?", "Exit?", MessageBoxButtons.YesNo);
+            if (exit == DialogResult.Yes)
             {
-                MessageBox.Show("Invalid user credentials", "ERROR");
+                this.Close();
                 return;
             }
-
-            if (masterTokenArray.Contains("unauthorized_client"))
-            {
-                MessageBox.Show("Invalid client", "ERROR");
-                return;
-            }
-
-            Dictionary<string, object> valuesMasterToken = JsonConvert.DeserializeObject<Dictionary<string, object>>(masterTokenArray);
-
-            //Deserialize Token value
-            if (valuesMasterToken is null) { MessageBox.Show("No token was created", "ERROR"); }
-
-            else
-            {
-                valuesMasterToken.TryGetValue("access_token", out token);
-                realmToken = token.ToString();
-                if (debug == true) { MessageBox.Show(realmToken); }
-                MessageBox.Show("Token acquired and copied to clipboard", "Success");
-                Clipboard.SetText(realmToken);
-            }
-        }
-
-        private void buttonLicense_Click(object sender, EventArgs e)
-        {
-            this.Visible = false;
-
-            FormAcquire form = new FormAcquire();
-            form.origin = "Main";
-            form.Show();
         }
 
         private void buttonVariables_Click(object sender, EventArgs e)
         {
             this.Visible = false;
-            
+
             FormVariables form = new FormVariables();
             form.origin = "Main";
             form.Show();
+
+            //this.Close();
         }
 
-        private void buttonExit_Click(object sender, EventArgs e)
+        private void buttonRealmsUsers_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+
+            FormAddUsers formusers = new FormAddUsers();
+            formusers.Show();
+        }
+        
+        public FormMain()
+        {
+            InitializeComponent();
+        }
+
+        private void FormMain_Load(object sender, EventArgs e)
+        {
+            url = xdoc.Element("url").Value;
+            realm = xdoc.Element("realm").Value;
+            username = xdoc.Element("username").Value;
+            password = xdoc.Element("password").Value;
+            clientId = xdoc.Element("clientId").Value;
+            masteruser = xdoc.Element("masteruser").Value;
+            masterpass = xdoc.Element("masterpass").Value;
+            debug = Convert.ToBoolean(xdoc.Element("debug").Value);
+            role = xdoc.Element("role").Value;
+
+            labelRealm.Text = "Realm: " + realm;
+            labelRole.Text = "Role: " + role;
+            labelUser.Text = "Username: " + username;
+            if (debug == true) { labelDebug.Text = "DEBUG MODE"; }
+            if (debug == false) { labelDebug.Text = ""; }
+        }
+
+            private void button2_Click(object sender, EventArgs e)
         {
             this.Close();
-        }
 
+            FormLicenses formlicenses = new FormLicenses();
+            formlicenses.Show();
+        }
     }
 }

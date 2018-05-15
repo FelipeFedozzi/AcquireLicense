@@ -1,10 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <variables>
-  <url>https://qakeycloak.eastus.cloudapp.azure.com/auth/realms/</url>
+  <url>https://qakeycloak.eastus.cloudapp.azure.com/auth</url>
   <realm>TestRealm</realm>
-  <username>test.em</username>
-  <password>test.em</password>
+  <username>admin</username>
+  <password>admin</password>
   <clientId>admin-cli</clientId>
   <role>esi.manage</role>
   <debug>False</debug>
+  <masteruser>QAdmin</masteruser>
+  <masterpass>aaa111!!!</masterpass>
 </variables>

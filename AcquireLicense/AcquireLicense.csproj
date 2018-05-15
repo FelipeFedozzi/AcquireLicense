@@ -63,8 +63,7 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>
-    </ApplicationIcon>
+    <ApplicationIcon>2018-05-08_10-49-14.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup />
   <PropertyGroup>
@@ -98,17 +97,29 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FormLicense.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FormLicense.Designer.cs">
-      <DependentUpon>FormLicense.cs</DependentUpon>
-    </Compile>
     <Compile Include="FormMain.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FormMain.Designer.cs">
       <DependentUpon>FormMain.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormAddUsers.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormAddUsers.Designer.cs">
+      <DependentUpon>FormAddUsers.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormAcquire.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormAcquire.Designer.cs">
+      <DependentUpon>FormAcquire.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormLicenses.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormLicenses.Designer.cs">
+      <DependentUpon>FormLicenses.cs</DependentUpon>
     </Compile>
     <Compile Include="FormVariables.cs">
       <SubType>Form</SubType>
@@ -118,8 +129,14 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="FormLicense.resx">
-      <DependentUpon>FormLicense.cs</DependentUpon>
+    <EmbeddedResource Include="FormAddUsers.resx">
+      <DependentUpon>FormAddUsers.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormAcquire.resx">
+      <DependentUpon>FormAcquire.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormLicenses.resx">
+      <DependentUpon>FormLicenses.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormMain.resx">
       <DependentUpon>FormMain.cs</DependentUpon>
@@ -166,6 +183,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="2018-05-08_10-49-14.ico" />
     <Content Include="var.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

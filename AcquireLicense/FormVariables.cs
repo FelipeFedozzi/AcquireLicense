@@ -6,7 +6,7 @@ namespace AcquireLicense
 {
     public partial class FormVariables : Form
     {
-        public string url, realm, username, password, clientId, role, origin;
+        public string url, realm, username, password, clientId, role, origin, masteruser, masterpass;
         bool debug;
         
         XElement xdoc = XElement.Load("C:\\Users\\Felipe.Fedozzi\\Source\\Repos\\AcquireLicense\\AcquireLicense\\var.xml");
@@ -21,6 +21,8 @@ namespace AcquireLicense
             password = xdoc.Element("password").Value;
             clientId = xdoc.Element("clientId").Value;
             role = xdoc.Element("role").Value;
+            masteruser = xdoc.Element("masteruser").Value;
+            masterpass = xdoc.Element("masterpass").Value;
             debug = Convert.ToBoolean(xdoc.Element("debug").Value);
 
             textBox1.Text = url;
@@ -29,6 +31,8 @@ namespace AcquireLicense
             textBox4.Text = password;
             textBox5.Text = clientId;
             textBox6.Text = role;
+            textBox7.Text = masteruser;
+            textBox8.Text = masterpass;
             checkBox1.Checked = debug;
         }
 
@@ -40,6 +44,8 @@ namespace AcquireLicense
             xdoc.Element("password").Value = textBox4.Text;
             xdoc.Element("clientId").Value = textBox5.Text;
             xdoc.Element("role").Value = textBox6.Text;
+            xdoc.Element("masteruser").Value = textBox7.Text;
+            xdoc.Element("masterpass").Value = textBox8.Text;
             xdoc.Element("debug").Value = checkBox1.Checked.ToString();
 
             xdoc.Save("C:\\Users\\Felipe.Fedozzi\\Source\\Repos\\AcquireLicense\\AcquireLicense\\var.xml");
