@@ -39,8 +39,10 @@
             this.realmNameBox = new System.Windows.Forms.TextBox();
             this.progressBarUser = new System.Windows.Forms.ProgressBar();
             this.progressBarRealm = new System.Windows.Forms.ProgressBar();
+            this.numericUpDown2 = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
             this.SuspendLayout();
             // 
             // userNameBox
@@ -54,9 +56,19 @@
             // numericUpDown
             // 
             this.numericUpDown.Location = new System.Drawing.Point(138, 50);
+            this.numericUpDown.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             this.numericUpDown.Name = "numericUpDown";
             this.numericUpDown.Size = new System.Drawing.Size(58, 20);
             this.numericUpDown.TabIndex = 4;
+            this.numericUpDown.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             this.numericUpDown.ValueChanged += new System.EventHandler(this.numericUpDown_ValueChanged);
             // 
             // buttonCreateUser
@@ -115,17 +127,32 @@
             // 
             // numericUpDown1
             // 
-            this.numericUpDown1.Location = new System.Drawing.Point(138, 135);
+            this.numericUpDown1.Location = new System.Drawing.Point(155, 135);
+            this.numericUpDown1.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.numericUpDown1.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(58, 20);
+            this.numericUpDown1.Size = new System.Drawing.Size(41, 20);
             this.numericUpDown1.TabIndex = 7;
+            this.numericUpDown1.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             this.numericUpDown1.ValueChanged += new System.EventHandler(this.numericUpDown1_ValueChanged);
             // 
             // realmNameBox
             // 
             this.realmNameBox.Location = new System.Drawing.Point(32, 135);
             this.realmNameBox.Name = "realmNameBox";
-            this.realmNameBox.Size = new System.Drawing.Size(100, 20);
+            this.realmNameBox.Size = new System.Drawing.Size(77, 20);
             this.realmNameBox.TabIndex = 6;
             this.realmNameBox.TextChanged += new System.EventHandler(this.realmNameBox_TextChanged);
             // 
@@ -143,12 +170,36 @@
             this.progressBarRealm.Size = new System.Drawing.Size(164, 23);
             this.progressBarRealm.TabIndex = 10;
             // 
+            // numericUpDown2
+            // 
+            this.numericUpDown2.Location = new System.Drawing.Point(111, 135);
+            this.numericUpDown2.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.numericUpDown2.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericUpDown2.Name = "numericUpDown2";
+            this.numericUpDown2.Size = new System.Drawing.Size(41, 20);
+            this.numericUpDown2.TabIndex = 11;
+            this.numericUpDown2.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericUpDown2.ValueChanged += new System.EventHandler(this.numericUpDown2_ValueChanged);
+            // 
             // FormAddUsers
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(232, 261);
             this.ControlBox = false;
+            this.Controls.Add(this.numericUpDown2);
             this.Controls.Add(this.progressBarRealm);
             this.Controls.Add(this.progressBarUser);
             this.Controls.Add(this.buttonCreateRealm);
@@ -168,6 +219,7 @@
             this.Load += new System.EventHandler(this.FormAddUsers_Load);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -186,5 +238,6 @@
         private System.Windows.Forms.TextBox realmNameBox;
         private System.Windows.Forms.ProgressBar progressBarUser;
         private System.Windows.Forms.ProgressBar progressBarRealm;
+        private System.Windows.Forms.NumericUpDown numericUpDown2;
     }
 }
