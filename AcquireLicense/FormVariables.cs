@@ -7,6 +7,12 @@ namespace AcquireLicense
     public partial class FormVariables : Form
     {
         public string url, realm, username, password, clientId, role, origin, masteruser, masterpass;
+
+        private void Label5_Click(object sender, EventArgs e)
+        {
+
+        }
+
         bool debug;
         
         XElement xdoc = XElement.Load("C:\\Users\\Felipe.Fedozzi\\Source\\Repos\\AcquireLicense\\AcquireLicense\\var.xml");

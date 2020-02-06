@@ -17,22 +17,22 @@ namespace AcquireLicense
 {
     public partial class FormAddUsers : Form
     {
-        object token;
-        string realmToken, url, realm, username, password, clientId, masteruser, masterpass, userIdArray, roleIdArray, realmIdArray, userId, roleId, realmId, role;
+        object token, newToken;
+        string realmToken, url, realm, username, password, clientId, masteruser, masterpass, userIdArray, roleIdArray, realmIdArray, userId, roleId, realmId, role, realmNewToken;
         IRestResponse response, responseNewUser, responseRealm, getIdRoleResponse, getIdRealmResponse, getIdUserResponse, responseRole, responseNewToken;
 
-        private void numericUpDown2_ValueChanged(object sender, EventArgs e)
+        public void numericUpDown2_ValueChanged(object sender, EventArgs e)
         {
             if (numericUpDown1.Value > numericUpDown2.Value) { buttonCreateRealm.Enabled = true; }
             else { buttonCreateRealm.Enabled = false; }
         }
 
         bool debug;
-        int i, r, a;
+        int i, r, a, numUsers;
 
         XElement xdoc = XElement.Load("C:\\Users\\Felipe.Fedozzi\\Source\\Repos\\AcquireLicense\\AcquireLicense\\var.xml");
 
-        private void buttonClose_Click(object sender, EventArgs e)
+        public void buttonClose_Click(object sender, EventArgs e)
         {
             this.Close();
 
@@ -40,7 +40,7 @@ namespace AcquireLicense
             form.Show();
         }
 
-        private void radioButtonRealmsUsers_CheckedChanged(object sender, EventArgs e)
+        public void radioButtonRealmsUsers_CheckedChanged(object sender, EventArgs e)
         {
             realmNameBox.Visible = true;
             buttonCreateRealm.Visible = true;
@@ -74,7 +74,7 @@ namespace AcquireLicense
             else { buttonCreateRealm.Enabled = false; }
         }
 
-        private void radioButtonUsers_CheckedChanged(object sender, EventArgs e)
+        public void radioButtonUsers_CheckedChanged(object sender, EventArgs e)
         {
             realmNameBox.Visible = false;
             buttonCreateRealm.Visible = false;
@@ -102,7 +102,7 @@ namespace AcquireLicense
             }
         }
 
-        private void realmNameBox_TextChanged(object sender, EventArgs e)
+        public void realmNameBox_TextChanged(object sender, EventArgs e)
         {
             if (radioButtonUsers.Checked == true)
             {
@@ -127,7 +127,7 @@ namespace AcquireLicense
             else { buttonCreateRealm.Enabled = false; }
         }
 
-        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        public void numericUpDown1_ValueChanged(object sender, EventArgs e)
         {
             if (radioButtonUsers.Checked == true)
             {
@@ -152,7 +152,7 @@ namespace AcquireLicense
             else { buttonCreateRealm.Enabled = false; }
         }
 
-        private void buttonCreateRealm_Click(object sender, EventArgs e)
+        public void buttonCreateRealm_Click(object sender, EventArgs e)
         {
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
 
@@ -173,6 +173,8 @@ namespace AcquireLicense
 
             do
             {
+                labelRealms.Text = "Creating " + realmNameBox.Text + r + ".\nPlease wait...";
+
                 var client = new RestClient(url + "/realms/master/protocol/openid-connect/token");
                 var request = new RestRequest(Method.POST);
                 request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -221,12 +223,53 @@ namespace AcquireLicense
                 
                 progressBarRealm.Value = r - 1;
 
-                i = 1;
+                i = Convert.ToInt32(numericUpDown3.Value);
 
                 do {
+                    labelUsers.Text = "Creating " + userNameBox.Text + i + ".\nPlease wait...";
+
+                    //Acquire a new token
+                    var clientNewToken = new RestClient(url + "/realms/master/protocol/openid-connect/token");
+                    var requestNewToken = new RestRequest(Method.POST);
+                    requestNewToken.AddHeader("Content-Type", "application/x-www-form-urlencoded");
+                    requestNewToken.AddParameter("undefined", "grant_type=password&username=" + masteruser + "" +
+                                                      "&password=" + masterpass + "" +
+                                                      "&client_id=" + clientId, ParameterType.RequestBody);
+
+                    responseNewToken = clientNewToken.Execute(requestNewToken);
+
+                    //if (debug == true) { MessageBox.Show(response.Content); }
+
+                    string newTokenArray = responseNewToken.Content;
+
+                    if (newTokenArray.Contains("invalid"))
+                    {
+                        MessageBox.Show("Invalid user credentials", "ERROR");
+                        return;
+                    }
+
+                    if (newTokenArray.Contains("unauthorized_client"))
+                    {
+                        MessageBox.Show("Invalid client", "ERROR");
+                        return;
+                    }
+
+                    Dictionary<string, object> valuesNewToken = JsonConvert.DeserializeObject<Dictionary<string, object>>(newTokenArray);
+
+                    //Deserialize Token value
+                    if (valuesNewToken is null) { MessageBox.Show("No token was created", "ERROR"); }
+
+                    else
+                    {
+                        valuesNewToken.TryGetValue("access_token", out newToken);
+                        realmNewToken = newToken.ToString();
+                        if (debug == true) { MessageBox.Show("Master token = " + realmNewToken); }
+                    }
+
+                    //Create new user
                     var clientUser = new RestClient(url + "/admin/realms/" + realmNameBox.Text + r + "/users");
                     var requestUser = new RestRequest(Method.POST);
-                    requestUser.AddHeader("Authorization", "Bearer " + realmToken);
+                    requestUser.AddHeader("Authorization", "Bearer " + realmNewToken);
                     requestUser.AddHeader("Content-Type", "application/json");
                     requestUser.AddParameter("undefined", "{\"username\":\"" + userNameBox.Text + i + "\"," +
                                                           "\"enabled\":\"true\",\"emailVerified\":\"true\"," +
@@ -238,7 +281,7 @@ namespace AcquireLicense
                     //Get user id
                     var getIdUser = new RestClient(url + "/admin/realms/" + realmNameBox.Text + r + "/users/?username=" + userNameBox.Text + i);
                     var requestIdUser = new RestRequest(Method.GET);
-                    requestIdUser.AddHeader("Authorization", "Bearer " + realmToken);
+                    requestIdUser.AddHeader("Authorization", "Bearer " + realmNewToken);
                     requestIdUser.AddHeader("Content-Type", "application/x-www-form-urlencoded");
                     getIdUserResponse = getIdUser.Execute(requestIdUser);
 
@@ -255,7 +298,7 @@ namespace AcquireLicense
                     //Get role id
                     var getIdRole = new RestClient(url + "/admin/realms/" + realmNameBox.Text + r + "/roles/" + role);
                     var requestIdRole = new RestRequest(Method.GET);
-                    requestIdRole.AddHeader("Authorization", "Bearer " + realmToken);
+                    requestIdRole.AddHeader("Authorization", "Bearer " + realmNewToken);
                     requestIdRole.AddHeader("Content-Type", "application/x-www-form-urlencoded");
                     getIdRoleResponse = getIdRole.Execute(requestIdRole);
                     roleIdArray = getIdRoleResponse.Content;
@@ -272,7 +315,7 @@ namespace AcquireLicense
                     //Get realm id
                     var getIdRealm = new RestClient(url + "/admin/realms/" + realmNameBox.Text + r);
                     var requestIdRealm = new RestRequest(Method.GET);
-                    requestIdRealm.AddHeader("Authorization", "Bearer " + realmToken);
+                    requestIdRealm.AddHeader("Authorization", "Bearer " + realmNewToken);
                     requestIdRealm.AddHeader("Content-Type", "application/x-www-form-urlencoded");
                     getIdRealmResponse = getIdRealm.Execute(requestIdRealm);
                     realmIdArray = getIdRealmResponse.Content;
@@ -289,7 +332,7 @@ namespace AcquireLicense
                     //Assign role
                     var clientRole = new RestClient(url + "/admin/realms/" + realmNameBox.Text + r + "/users/" + userId + "/role-mappings/realm");
                     var requestRole = new RestRequest(Method.POST);
-                    requestRole.AddHeader("Authorization", "Bearer " + realmToken);
+                    requestRole.AddHeader("Authorization", "Bearer " + realmNewToken);
                     requestRole.AddHeader("Content-Type", "application/json");
                     requestRole.AddParameter("undefined", "[{\"clientRole\":\"false\"," +
                                                         "\"composite\":\"false\"," +
@@ -303,18 +346,21 @@ namespace AcquireLicense
 
                     i++;
 
+                    labelUsers.Update();
+                    labelRealms.Update();
+
                 } while (i <= numericUpDown.Value);
 
                 r++;
 
             } while (r <= numericUpDown1.Value);
 
-            MessageBox.Show("Done creating " + (r-1) + " realm(s) and " + (i-1) + " user(s).\nAll users have the role " + role, "Success");
+            MessageBox.Show("Done creating " + ((numericUpDown1.Value - numericUpDown2.Value) + 1) + " realm(s) and " + ((numericUpDown.Value - numericUpDown3.Value) + 1) + " user(s).\nAll users have the role " + role, "Success");
             progressBarUser.Value = i - 1;
             progressBarRealm.Value = r - 1;
         }
 
-        private void numericUpDown_ValueChanged(object sender, EventArgs e)
+        public void numericUpDown_ValueChanged(object sender, EventArgs e)
         {
             if (radioButtonUsers.Checked == true)
             {
@@ -334,9 +380,11 @@ namespace AcquireLicense
                     buttonCreateRealm.Enabled = true;
                 }
             }
+
+            numUsers = Convert.ToInt32(numericUpDown.Value);
         }
 
-        private void userNameBox_TextChanged(object sender, EventArgs e)
+        public void userNameBox_TextChanged(object sender, EventArgs e)
         {
             if (radioButtonUsers.Checked == true)
             {
@@ -363,7 +411,7 @@ namespace AcquireLicense
             InitializeComponent();
         }
 
-        private void button1_Click(object sender, EventArgs e)  //Add Users
+        public void button1_Click(object sender, EventArgs e)  //Add Users
         {
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
 
@@ -377,10 +425,12 @@ namespace AcquireLicense
 
             progressBarUser.Maximum = Convert.ToInt32(numericUpDown.Value) + 1;
 
-            i = 1;
+            i = Convert.ToInt32(numericUpDown3.Value);
 
             do
             {
+                labelUsers.Text = "Creating " + userNameBox.Text + i + ".\nPlease wait...";
+
                 var client = new RestClient(url + "/realms/" + realm + "/protocol/openid-connect/token");
                 var request = new RestRequest(Method.POST);
                 request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -453,14 +503,14 @@ namespace AcquireLicense
                 getIdRoleResponse = getIdRole.Execute(requestIdRole);
 
                 roleIdArray = getIdRoleResponse.Content;
-                MessageBox.Show(roleIdArray);
+                
                 char[] myString2 = roleIdArray.ToCharArray();
 
                 string[] strings2 = new string[200];
                 for (a = 7; a < 43; a++)
                     strings2[a] = myString2[a].ToString();
                 roleId = string.Join("", strings2);
-                MessageBox.Show(roleId);
+                
                 if (debug == true) { MessageBox.Show(roleId); }
 
                 //Assign role
@@ -484,14 +534,17 @@ namespace AcquireLicense
                 }
 
                 i++;
+
+                labelUsers.Update();
+
             } while (i <= numericUpDown.Value);
 
-            MessageBox.Show("Created " + (i-1) + " users.");
+            MessageBox.Show("Created " + ((numericUpDown.Value - numericUpDown3.Value) + 1) + " users.");
             progressBarUser.Value = i;
 
         }
 
-        private void FormAddUsers_Load(object sender, EventArgs e)
+        public void FormAddUsers_Load(object sender, EventArgs e)
         {
             radioButtonUsers.Checked = true;
 
@@ -502,6 +555,9 @@ namespace AcquireLicense
             numericUpDown1.Value = 1;
             buttonCreateRealm.Enabled = false;
             numericUpDown2.Value = 1;
+
+            labelRealms.Text = "";
+            labelUsers.Text = "";
         }
     }
 }

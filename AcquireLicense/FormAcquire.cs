@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Xml.Linq;
 using System.Net;
 using System.Windows.Forms;
+using System.Linq;
+using System.Web.Script.Serialization;
 
 namespace AcquireLicense
 {
@@ -89,6 +91,7 @@ namespace AcquireLicense
             {
                 valuesMasterToken.TryGetValue("access_token", out token);
                 realmToken = token.ToString();
+                Clipboard.SetText(realmToken);
                 if (debug == true) { MessageBox.Show(realmToken, "DEBUG"); }
             }
 
@@ -100,7 +103,7 @@ namespace AcquireLicense
 
             IRestResponse responseLicense = clientLicense.Execute(requestLicense);
 
-            if (debug == true) { MessageBox.Show(responseLicense.Content, "DEBUG"); }
+            if (debug == true) { MessageBox.Show(responseLicense.Content, "DEBUG"); Clipboard.SetText(responseLicense.Content); }
 
             if (responseLicense.Content.Contains("errorMessage") && responseLicense.Content.Contains("license") && responseLicense.Content.Contains("not") && responseLicense.Content.Contains("found"))
             {
@@ -120,12 +123,13 @@ namespace AcquireLicense
             else
             {
                 DialogResult dialogResult = MessageBox.Show("License for " + role.ToUpper() + " acquired for user " + username.ToUpper() + ". Do you want to copy the token?", "License Acquired", MessageBoxButtons.YesNo);
+                
                 if (dialogResult == DialogResult.Yes)
                 {
-                    Dictionary<string, object> valuesLicenseToken = JsonConvert.DeserializeObject<Dictionary<string, object>>(responseLicense.Content);
+                    var valuesLicenseToken = JsonConvert.DeserializeObject<Dictionary<string, object>>(responseLicense.Content);
                     valuesLicenseToken.TryGetValue(role, out licenseToken);
+                    Clipboard.SetText(responseLicense.Content.ToString());
                     MessageBox.Show("License Token acquired and copied to clipboard", "Token copied");
-                    Clipboard.SetText(licenseToken.ToString());
                 }
                 else { return; }
             }
@@ -276,10 +280,11 @@ namespace AcquireLicense
                 DialogResult dialogResult = MessageBox.Show("1 License for " + role.ToUpper() + " acquired for user " + username.ToUpper() + i + ". Do you want to copy the token?", "License Acquired", MessageBoxButtons.YesNo);
                 if (dialogResult == DialogResult.Yes)
                 {
+                    object test;
                     Dictionary<string, object> valuesLicenseToken = JsonConvert.DeserializeObject<Dictionary<string, object>>(responseLicense.Content);
-                    valuesLicenseToken.TryGetValue(role, out licenseToken);
+                    valuesLicenseToken.TryGetValue(role, out test);
                     MessageBox.Show("License Token acquired and copied to clipboard", "Token copied");
-                    Clipboard.SetText(licenseToken.ToString());
+                    Clipboard.SetText(test.ToString());
                     //progressBar.Visible = false;
                 }
                 else { return; }

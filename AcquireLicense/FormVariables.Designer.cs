@@ -156,9 +156,10 @@
             this.label5.AutoSize = true;
             this.label5.Location = new System.Drawing.Point(32, 173);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(29, 13);
+            this.label5.Size = new System.Drawing.Size(31, 13);
             this.label5.TabIndex = 13;
-            this.label5.Text = "Role";
+            this.label5.Text = "Type";
+            this.label5.Click += new System.EventHandler(this.Label5_Click);
             // 
             // label6
             // 
